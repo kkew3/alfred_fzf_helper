@@ -72,6 +72,7 @@ def fzf_filter(query,
                cmd_items=None,
                cmd_prefix=None,
                cmd_suffix=None,
+               exact=False,
                strip_space_before_match=True):
     """
     Request process ``fzf`` to fuzzy filter items with query. The keywords to
@@ -112,6 +113,8 @@ def fzf_filter(query,
            commands; assigning non-``None`` implies that each command is a
            prefix of the entire query. Needless to say, this argument is
            contradictory with ``cmd_prefix``
+    :param exact: if ``True``, switch to ``fzf``'s exact match mode
+    :type exact: bool
     :param strip_space_before_match: if ``True``, strip out the space around
            the query before matching against items
     :type strip_space_before_match: bool
@@ -134,7 +137,7 @@ def fzf_filter(query,
         query, items, cmd_items, cmd_prefix, cmd_suffix,
         strip_space_before_match)
     selected_items = [
-        candidates[k] for k in _request_fzf(query, list(candidates))
+        candidates[k] for k in _request_fzf(query, list(candidates), exact)
     ]
     if query_mode:
         return orig_query, selected_items, None
@@ -191,14 +194,21 @@ def _init_fzf_filter(query, items, cmd_items, cmd_prefix, cmd_suffix,
     return orig_query, query, candidates, not initialized
 
 
-def _request_fzf(query, candidates):
+def _request_fzf(query, candidates, exact):
+    fzf_args = ['fzf']
+    if exact:
+        fzf_args.append('--exact')
+    fzf_args.append('--filter')
+    fzf_args.append(query)
+
     stdin = ''.join(x + '\n' for x in candidates)
     try:
-        resp = subprocess.run(['fzf', '--filter', query],
-                              text=True,
-                              input=stdin,
-                              stdout=subprocess.PIPE,
-                              check=True)
+        resp = subprocess.run(
+            fzf_args,
+            text=True,
+            input=stdin,
+            stdout=subprocess.PIPE,
+            check=True)
         stdout = resp.stdout.rstrip('\n')
     except subprocess.CalledProcessError as err:
         if err.returncode != 1:
