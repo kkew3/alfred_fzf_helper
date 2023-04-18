@@ -242,7 +242,7 @@ def read_cache(cachedir,
     :type cache_token: str
     :param genresp: function to be called to produce responses if cache is not
            present
-    :type genresp: Callable[[], Dict[str, Any]]
+    :type genresp: Callable[[], Any]
     :param ensure_modified_later_than: a list of files whose modification time
            should be later than the cache retrieved
     :type ensure_modified_later_than: Optional[List[str]]
@@ -250,7 +250,7 @@ def read_cache(cachedir,
            when writing current cache
     :type delete_all_other_caches_on_write: bool
     :return: the object in the cache
-    :rtype: Dict[str, Any]
+    :rtype: Any
     """
     cachefile = os.path.join(cachedir, cache_token + '.json')
     need_write = False
