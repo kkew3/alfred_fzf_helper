@@ -194,6 +194,13 @@ def _init_fzf_filter(query, items, cmd_items, cmd_prefix, cmd_suffix,
     return orig_query, query, candidates, not initialized
 
 
+def test__request_fzf():
+    assert _request_fzf('x', ['x'], False) == ['x']
+    assert _request_fzf('x', ['x1', 'x2'], False) == ['x1', 'x2']
+    assert _request_fzf('', [''], False) == ['']
+    assert _request_fzf('', ['', ''], False) == ['', '']
+
+
 def _request_fzf(query, candidates, exact):
     fzf_args = ['fzf']
     if exact:
@@ -209,14 +216,12 @@ def _request_fzf(query, candidates, exact):
             input=stdin,
             stdout=subprocess.PIPE,
             check=True)
-        stdout = resp.stdout.rstrip('\n')
     except subprocess.CalledProcessError as err:
         if err.returncode != 1:
             raise
-        stdout = ''
-    if not stdout:
         return []
-    return stdout.split('\n')
+    else:
+        return re.findall(r'([^\n]*)\n', resp.stdout)
 
 
 def _remove_metachar_from_query(query):
