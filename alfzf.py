@@ -7,6 +7,7 @@ import json
 import os
 import re
 import subprocess
+import warnings
 
 __all__ = [
     'fzf_filter',
@@ -167,8 +168,12 @@ def _init_fzf_filter(query, items, cmd_items, cmd_prefix, cmd_suffix,
                 query = query[i + 1:]
                 if strip_space_before_match:
                     query = query.strip()
-                candidates = collections.OrderedDict(
-                    (x.get('match', x['title']), x) for x in cmd_items)
+                _candidates = [(x.get('match', x['title']), x)
+                               for x in cmd_items]
+                candidates = collections.OrderedDict(_candidates)
+                if len(_candidates) > len(candidates):
+                    warnings.warn('Duplicate matching keys exist, which may '
+                                  'result in loss of results after filtering.')
                 initialized = True
         elif cmd_suffix:
             try:
@@ -180,16 +185,23 @@ def _init_fzf_filter(query, items, cmd_items, cmd_prefix, cmd_suffix,
                 query = query[:i]
                 if strip_space_before_match:
                     query = query.strip()
-                candidates = collections.OrderedDict(
-                    (x.get('match', x['title']), x) for x in cmd_items)
+                _candidates = [(x.get('match', x['title']), x)
+                               for x in cmd_items]
+                candidates = collections.OrderedDict(_candidates)
+                if len(_candidates) > len(candidates):
+                    warnings.warn('Duplicate matching keys exist, which may '
+                                  'result in loss of results after filtering.')
                 initialized = True
 
     if not initialized:
         orig_query = _remove_metachar_from_query(query.strip())
         if strip_space_before_match:
             query = query.strip()
-        candidates = collections.OrderedDict(
-            (x.get('match', x['title']), x) for x in items)
+        _candidates = [(x.get('match', x['title']), x) for x in items]
+        candidates = collections.OrderedDict(_candidates)
+        if len(_candidates) > len(candidates):
+            warnings.warn('Duplicate matching keys exist, which may '
+                          'result in loss of results after filtering.')
 
     return orig_query, query, candidates, not initialized
 
