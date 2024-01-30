@@ -1,13 +1,15 @@
-# Introduction
+# Alfred fzf helper
+
+## Introduction
 
 Simple helper function that enables fuzzy search via [`fzf`](https://github.com/junegunn/fzf) in Alfred 5.
 
-# Dependency
+## Dependency
 
 You will need to have `fzf` installed.
 Nothing else.
 
-# Installation
+## Installation
 
 Either copy `alfzf.py` to your repository, or:
 
@@ -15,6 +17,6 @@ Either copy `alfzf.py` to your repository, or:
 pip install .
 ```
 
-# Inspired by
+## Inspired by
 
 - [`alfred-fuzzy`](https://github.com/deanishe/alfred-fuzzy)
