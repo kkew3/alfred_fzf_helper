@@ -11,10 +11,19 @@ Nothing else.
 
 ## Installation
 
-Either copy `alfzf.py` to your repository, or:
+**Option 1**:
+
+Clone this repository and
+
+- either copy `alfzf.py` to your repository, or
+- `pip install .` to your Python environment.
+
+**Option 2**:
+
+I also host this module on my website:
 
 ```bash
-pip install .
+pip install -f https://kkew3.github.io/pip alfred-fzf-helper
 ```
 
 ## Inspired by
